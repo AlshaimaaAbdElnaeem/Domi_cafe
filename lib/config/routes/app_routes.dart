@@ -1,9 +1,10 @@
-import 'package:domi_cafe/features/home/presentation/screens/home_screen.dart';
 import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
 import 'package:domi_cafe/features/layout/presentation/screens/home_layout.dart';
+import 'package:domi_cafe/features/orders/presentation/cubit/home_cubit.dart';
 import 'package:domi_cafe/features/splash/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Routes {
   static const String splash = '/';
@@ -12,7 +13,7 @@ class Routes {
   static const String auth = '/auth';
   static const String cart = '/cart';
   static const String profile = '/profile';
-
+  static const String myOrders = '/myOrders';
 }
 
 class AppRoutes {
@@ -22,33 +23,29 @@ class AppRoutes {
     switch (settings.name) {
       case Routes.splash:
         return MaterialPageRoute(
-          builder:
-              (_) => const SplashScreen(),
+          builder: (_) => const SplashScreen(),
           settings: settings,
         );
       case Routes.layout:
         return MaterialPageRoute(
-          builder:
-              (_) => MultiBlocProvider(
-                providers: [
-                  BlocProvider<LayoutCubit>(
-                    create: (context) => LayoutCubit(),
-                  ),
-               
-                ],
-                child: const HomeLayout(),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider<LayoutCubit>(
+                create: (_) => LayoutCubit(
+                  userId: 'TEST_USER_UID', // استبدلي بالـ actual UID
+                  firestore: FirebaseFirestore.instance,
+                ),
               ),
+              BlocProvider<HomeCubit>(
+                create: (_) => HomeCubit(FirebaseFirestore.instance),
+              ),
+            ],
+            child: HomeLayout(),
+          ),
           settings: settings,
         );
-      case Routes.home:
-        return MaterialPageRoute(
-          builder:
-              (_) => const HomeScreen(),
-        );
-    
       default:
         return null;
     }
-
   }
 }
