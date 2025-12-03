@@ -7,35 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:330809796631:android:6d2e24c45ce00cf56ad452",
-        "android_client_info": {
-          "package_name": "com.demi.cafe"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "330809796631-eskr7q0vqa0jrs0ku918esiuvp8af4lb.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCHCQAue-l6v55DYJy9s4J5-kOL5QU0x_s"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "330809796631-eskr7q0vqa0jrs0ku918esiuvp8af4lb.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:330809796631:android:1d33ec0e2f9c65076ad452",
         "android_client_info": {
           "package_name": "com.example.domi_cafe"
@@ -58,6 +29,13 @@
             {
               "client_id": "330809796631-eskr7q0vqa0jrs0ku918esiuvp8af4lb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "330809796631-fqh9h6dq5jema3ica7ioi61s484m4v0m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.domiCafe"
+              }
             }
           ]
         }
