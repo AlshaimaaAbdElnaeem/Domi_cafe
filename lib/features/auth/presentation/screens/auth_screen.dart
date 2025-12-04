@@ -5,6 +5,8 @@ import '../cubit/auth_state.dart';
 import '../widgets/login_widget.dart';
 import '../widgets/sign_up_widget.dart';
 import 'package:domi_cafe/features/home/presentation/screens/home_screen.dart';
+import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
+
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -24,7 +26,8 @@ class AuthScreen extends StatelessWidget {
           } else if (state is AuthSuccess) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
+            MaterialPageRoute(builder: (_) =>  MenuScreen()),
+
             );
           }
         },
