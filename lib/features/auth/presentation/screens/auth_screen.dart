@@ -26,7 +26,7 @@ class AuthScreen extends StatelessWidget {
           } else if (state is AuthSuccess) {
             Navigator.pushReplacement(
               context,
-            MaterialPageRoute(builder: (_) =>  MenuScreen()),
+            MaterialPageRoute(builder: (_) => const MenuScreen()),
 
             );
           }
