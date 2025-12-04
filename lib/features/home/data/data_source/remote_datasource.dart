@@ -1,25 +1,23 @@
+// lib/features/home/data/data_source/remote_datasource.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:domi_cafe/core/networking/firebase_config.dart';
 import 'package:domi_cafe/core/utils/failure.dart';
-import 'package:domi_cafe/features/home/data/models/product_model.dart';
+import '../../../product_details/data/models/product_model.dart';
 
 class RemoteDatasource {
-FirestoreService firestoreService = FirestoreService();
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-
-  Future<Either<List<ProductModel>,Failure>> getData() async{
-
+  Future<Either<Failure, List<ProductModel>>> getData() async {
     try {
-      final result = await firestoreService.getCollection(collection: 'products');
+      final snapshot = await firestore.collection('products').get();
 
-      List<ProductModel> products =
-          result.map((e) => ProductModel.fromJson(e)).toList();
-          
-     return Left(products); 
+      final products = snapshot.docs
+          .map((doc) => ProductModel.fromJson(doc.data(), doc.id))
+          .toList();
 
+      return Right(products); // Right = Success
     } catch (e) {
-      return Right(Failure(e.toString()));
+      return Left(Failure(e.toString())); // Left = Failure
     }
-
   }
 }
