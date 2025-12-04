@@ -4,12 +4,23 @@ import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/login_widget.dart';
 import '../widgets/sign_up_widget.dart';
-import 'package:domi_cafe/features/home/presentation/screens/home_screen.dart';
 import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
 
-
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  bool isLogin = true;
+
+  void toggleMode() {
+    setState(() {
+      isLogin = !isLogin;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +35,10 @@ class AuthScreen extends StatelessWidget {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.info)));
           } else if (state is AuthSuccess) {
+            // بعد تسجيل الدخول تروح MenuScreen
             Navigator.pushReplacement(
               context,
-            MaterialPageRoute(builder: (_) => const MenuScreen()),
-
+              MaterialPageRoute(builder: (_) => const MenuScreen()),
             );
           }
         },
@@ -40,9 +51,10 @@ class AuthScreen extends StatelessWidget {
             );
           }
 
+          // الشاشة الرئيسية بعد إزالة الكونفليكت
           return Scaffold(
             appBar: AppBar(
-              title: Text(cubit.isLogin ? "Login" : "Sign Up"),
+              title: Text(isLogin ? "Login" : "Sign Up"),
               centerTitle: true,
             ),
             body: Center(
@@ -50,17 +62,15 @@ class AuthScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    cubit.isLogin
+                    isLogin
                         ? LoginWidget(buttonText: "Login")
                         : SignUpWidget(buttonText: "Sign Up"),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: cubit.toggleMode,
-                      child: Text(
-                        cubit.isLogin
-                            ? "Don't have an account? Sign Up"
-                            : "Already have an account? Login",
-                      ),
+                      onPressed: toggleMode,
+                      child: Text(isLogin
+                          ? "Don't have an account? Sign Up"
+                          : "Already have an account? Login"),
                     ),
                   ],
                 ),
