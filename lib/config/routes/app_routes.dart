@@ -2,6 +2,8 @@ import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
 import 'package:domi_cafe/features/layout/presentation/screens/home_layout.dart';
 import 'package:domi_cafe/features/orders/presentation/cubit/home_cubit.dart';
 import 'package:domi_cafe/features/splash/presentation/screens/splash_screen.dart';
+import 'package:domi_cafe/features/auth/presentation/screens/auth_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,13 +28,14 @@ class AppRoutes {
           builder: (_) => const SplashScreen(),
           settings: settings,
         );
+
       case Routes.layout:
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
               BlocProvider<LayoutCubit>(
                 create: (_) => LayoutCubit(
-                  userId: 'TEST_USER_UID', // استبدلي بالـ actual UID
+                  userId: 'TEST_USER_UID', // TODO: Replace with real UID
                   firestore: FirebaseFirestore.instance,
                 ),
               ),
@@ -40,10 +43,17 @@ class AppRoutes {
                 create: (_) => HomeCubit(FirebaseFirestore.instance),
               ),
             ],
-            child: HomeLayout(),
+            child: const HomeLayout(),
           ),
           settings: settings,
         );
+
+      case Routes.auth:
+        return MaterialPageRoute(
+          builder: (_) => const AuthScreen(),
+          settings: settings,
+        );
+
       default:
         return null;
     }
