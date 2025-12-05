@@ -1,4 +1,5 @@
 import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
+import 'package:domi_cafe/features/tables/presentation/screens/tables_screen.dart';
 import 'package:floating_frosted_bottom_bar/app/frosted_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,35 +28,58 @@ class HomeLayout extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Home Icon
               IconButton(
                 icon: Icon(
                   Icons.home_outlined,
                   size: 30.w,
-                  color: cubit.currentIndex == 0 ? theme.primaryColor : theme.iconTheme.color,
+                  color: cubit.currentIndex == 0
+                      ? theme.primaryColor
+                      : theme.iconTheme.color,
                 ),
                 onPressed: () => cubit.changeBottomNavIndex(0),
               ),
+
+              // Tables Icon → Navigate to TablesScreen
               IconButton(
                 icon: Icon(
                   Icons.table_chart_outlined,
                   size: 30.w,
-                  color: cubit.currentIndex == 1 ? theme.primaryColor : theme.iconTheme.color,
+                  color: cubit.currentIndex == 1
+                      ? theme.primaryColor
+                      : theme.iconTheme.color,
                 ),
-                onPressed: () => cubit.changeBottomNavIndex(1),
+                onPressed: () {
+                  cubit.changeBottomNavIndex(1);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const TablesScreen(),
+                    ),
+                  );
+                },
               ),
+
+              // Favorites Icon
               IconButton(
                 icon: Icon(
                   Icons.favorite_border,
                   size: 30.w,
-                  color: cubit.currentIndex == 2 ? theme.primaryColor : theme.iconTheme.color,
+                  color: cubit.currentIndex == 2
+                      ? theme.primaryColor
+                      : theme.iconTheme.color,
                 ),
                 onPressed: () => cubit.changeBottomNavIndex(2),
               ),
+
+              // Orders/List Icon
               IconButton(
                 icon: Icon(
                   Icons.list_alt_outlined,
                   size: 30.w,
-                  color: cubit.currentIndex == 3 ? theme.primaryColor : theme.iconTheme.color,
+                  color: cubit.currentIndex == 3
+                      ? theme.primaryColor
+                      : theme.iconTheme.color,
                 ),
                 onPressed: () => cubit.changeBottomNavIndex(3),
               ),

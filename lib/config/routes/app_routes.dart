@@ -1,15 +1,19 @@
-import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
-import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
-import 'package:domi_cafe/features/layout/presentation/screens/home_layout.dart';
-import 'package:domi_cafe/features/orders/presentation/cubit/home_cubit.dart';
-import 'package:domi_cafe/features/splash/presentation/screens/splash_screen.dart';
-import 'package:domi_cafe/features/auth/presentation/screens/auth_screen.dart';
-import 'package:domi_cafe/features/product_details/presentation/pages/product_details_page.dart';
-import 'package:domi_cafe/features/cart/presentation/screens/cart_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+// Screens
+import 'package:domi_cafe/features/splash/presentation/screens/splash_screen.dart';
+import 'package:domi_cafe/features/auth/presentation/screens/auth_screen.dart';
+import 'package:domi_cafe/features/home/presentation/screens/home_screen.dart';
+import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
+import 'package:domi_cafe/features/cart/presentation/screens/cart_screen.dart';
+import 'package:domi_cafe/features/product_details/presentation/pages/product_details_page.dart';
+import 'package:domi_cafe/features/layout/presentation/screens/home_layout.dart';
+
+// Cubits
+import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
+import 'package:domi_cafe/features/orders/presentation/cubit/home_cubit.dart';
 
 class Routes {
   static const String splash = '/';
@@ -28,6 +32,7 @@ class AppRoutes {
 
   Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+
       case Routes.splash:
         return MaterialPageRoute(
           builder: (_) => const SplashScreen(),
@@ -37,6 +42,12 @@ class AppRoutes {
       case Routes.auth:
         return MaterialPageRoute(
           builder: (_) => const AuthScreen(),
+          settings: settings,
+        );
+
+      case Routes.home:
+        return MaterialPageRoute(
+          builder: (_) => const HomeScreen(),
           settings: settings,
         );
 
@@ -58,7 +69,7 @@ class AppRoutes {
             providers: [
               BlocProvider<LayoutCubit>(
                 create: (_) => LayoutCubit(
-                  userId: 'TEST_USER_UID', // TODO: Replace with real UID
+                  userId: 'TEST_USER_UID', // TODO: replace when auth done
                   firestore: FirebaseFirestore.instance,
                 ),
               ),
