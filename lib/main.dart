@@ -1,52 +1,15 @@
-// import 'package:domi_cafe/app.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'features/auth/presentation/cubit/auth_cubit.dart';
-
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-// await Firebase.initializeApp();
-//   await Firebase.initializeApp(
-//     options: const FirebaseOptions(
-//       apiKey: "AIzaSyADuDp22Yd6kZOdtbG4Vm2UeRG2vfsadPk", // من Firebase Console
-//       authDomain: "coffee-site-iti.firebaseapp.com",
-//       projectId: "coffee-site-iti",
-//       storageBucket: "coffee-site-iti.firebasestorage.app",
-//       messagingSenderId: "330809796631",
-//       appId: "1:330809796631:web:a4f0db5ffc334ff16ad452",
-//       measurementId: "G-6QMBCFKMJB", // اختياري للويب
-//     ),
-//   );
-
-//   runApp(
-//     BlocProvider(
-//       create: (_) => AuthCubit(),
-//       child: const MyApp(),
-//     ),
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:domi_cafe/app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/cart/presentation/cubit/cart_cubit.dart';
+import 'features/cart/domain/usecases/add_to_cart_usecase.dart';
+import 'features/cart/domain/usecases/get_cart_usecase.dart';
+import 'features/cart/domain/usecases/remove_from_cart_usecase.dart';
+import 'features/cart/data/repositories/cart_repository_impl.dart';
+import 'features/home/presentation/cubit/product_cubit/product_cubit.dart';
+import 'features/home/data/data_source/remote_datasource.dart';
 import 'firebase_options.dart'; // مهم جداً
 
 void main() async {
@@ -58,8 +21,24 @@ void main() async {
   );
 
   runApp(
-    BlocProvider(
-      create: (_) => AuthCubit(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthCubit>(
+          create: (_) => AuthCubit(),
+        ),
+        BlocProvider<CartCubit>(
+          create: (_) => CartCubit(
+            addToCartUsecase: AddToCartUsecase(CartRepositoryImpl()),
+            getCartUsecase: GetCartUsecase(CartRepositoryImpl()),
+            removeFromCartUsecase: RemoveFromCartUsecase(CartRepositoryImpl()),
+            userId: '',
+          ),
+        ),
+        BlocProvider<ProductCubit>(
+          create: (_) => ProductCubit(RemoteDatasource())..getData(),
+        ),
+        // لو في Cubits عالمية تانية ممكن تضيفها هنا
+      ],
       child: const MyApp(),
     ),
   );

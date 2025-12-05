@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     iosBundleId: 'com.example.domiCafe',
   );
 
+
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyADuDp22Yd6kZOdtbG4Vm2UeRG2vfsadPk',
     appId: '1:330809796631:web:a4f0db5ffc334ff16ad452',
