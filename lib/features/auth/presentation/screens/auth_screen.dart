@@ -1,10 +1,10 @@
+import 'package:domi_cafe/config/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/login_widget.dart';
 import '../widgets/sign_up_widget.dart';
-import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -35,10 +35,10 @@ class _AuthScreenState extends State<AuthScreen> {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.info)));
           } else if (state is AuthSuccess) {
-            // بعد تسجيل الدخول تروح MenuScreen
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(builder: (_) => const MenuScreen()),
+              Routes.layout,
+
             );
           }
         },

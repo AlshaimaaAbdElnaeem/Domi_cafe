@@ -1,3 +1,6 @@
+import 'package:domi_cafe/features/favorites/data/datasources/favorite_remote_ds.dart';
+import 'package:domi_cafe/features/favorites/data/repositories/favorite_repository_impl.dart';
+import 'package:domi_cafe/features/favorites/presentation/cubit/favorite_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:domi_cafe/features/card/presentation/widgets/card_widget.dart';
@@ -5,6 +8,7 @@ import 'package:domi_cafe/features/home/presentation/cubit/product_cubit/product
 import 'package:domi_cafe/features/home/presentation/cubit/product_cubit/product_state.dart';
 import 'package:domi_cafe/config/routes/app_routes.dart';
 import 'package:domi_cafe/features/home/data/data_source/remote_datasource.dart';
+
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key}); // نخليها const
 
@@ -30,9 +34,7 @@ class MenuScreen extends StatelessWidget {
           body: BlocBuilder<ProductCubit, ProductState>(
             builder: (context, state) {
               if (state is LoadingProductState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               } else if (state is LoadedProductState) {
                 if (state.products.isEmpty) {
                   return const Center(child: Text('No products available'));
@@ -48,24 +50,25 @@ class MenuScreen extends StatelessWidget {
                   itemCount: state.products.length,
                   itemBuilder: (context, index) {
                     final product = state.products[index];
-                    return CardWidget(
-                      productModel: product,
-                      onDetailsTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.productDetails,
-                          arguments: product.id,
-                        );
-                      },
-                      onFavoriteTap: () {},
-                      onCartTap: () {},
+                    return BlocProvider(
+                      create: (context) => FavoriteCubit(FavoriteRepositoryImpl(FavoriteRemoteDs())),
+                      child: CardWidget(
+                        productModel: product,
+                        onDetailsTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            Routes.productDetails,
+                            arguments: product.id,
+                          );
+                        },
+                        onFavoriteTap: () {},
+                        onCartTap: () {},
+                      ),
                     );
                   },
                 );
               } else if (state is ErrorProductState) {
-                return Center(
-                  child: Text('Error: ${state.error}'),
-                );
+                return Center(child: Text('Error: ${state.error}'));
               } else {
                 return const Center(child: Text('No data available'));
               }

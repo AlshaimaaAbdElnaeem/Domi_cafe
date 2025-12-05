@@ -5,8 +5,10 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      "Cart Screen"
+    return Scaffold(
+      body: const Text(
+        "Cart Screen"
+      ),
     );
   }
 }

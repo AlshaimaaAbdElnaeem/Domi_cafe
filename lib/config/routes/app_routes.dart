@@ -1,4 +1,5 @@
 import 'package:domi_cafe/features/home/presentation/screens/home_screen.dart';
+import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
 import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
 import 'package:domi_cafe/features/layout/presentation/screens/home_layout.dart';
 import 'package:domi_cafe/features/splash/presentation/screens/splash_screen.dart';
@@ -8,6 +9,8 @@ import 'package:domi_cafe/features/product_details/presentation/pages/product_de
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../features/cart/presentation/screens/cart_screen.dart';
+
 class Routes {
   static const String splash = '/';
   static const String layout = '/layout';
@@ -16,6 +19,7 @@ class Routes {
   static const String cart = '/cart';
   static const String profile = '/profile';
   static const String productDetails = '/product_details'; // ← اضفت
+  static const String menu = '/menu';
 }
 
 class AppRoutes {
@@ -42,6 +46,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
       case Routes.auth:
         return MaterialPageRoute(builder: (_) => const AuthScreen());
+      case Routes.cart:
+        return MaterialPageRoute(builder: (_) => const CartScreen());
+      case Routes.menu:
+        return MaterialPageRoute(builder: (_) => const MenuScreen());
+
 
       // ← هنا اضفت حالة ProductDetails
       case Routes.productDetails:
@@ -49,7 +58,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => ProductDetailsPage(productId: productId),
           settings: settings,
-        );
+        ); 
 
       default:
         return null;

@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
          theme: AppThemes.instance.lightTheme(context),           
          // supportedLocales: context.supportedLocales,
          // locale: context.locale,
-         initialRoute: Routes.auth,
+         initialRoute: Routes.splash,
          onGenerateRoute: AppRoutes.instance.onGenerateRoute,
        );
      },

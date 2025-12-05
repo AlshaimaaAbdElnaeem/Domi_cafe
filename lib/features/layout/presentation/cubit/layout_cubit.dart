@@ -19,7 +19,7 @@ class LayoutCubit extends Cubit<LayoutState> {
   ];
   int currentIndex = 0;
   List<Widget> screens = [
-    MenuScreen(),
+    HomeScreen(),
     TablesScreen(),
     FavoritScreen(),
     MyOrdersScreen()
