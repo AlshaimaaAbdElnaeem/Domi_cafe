@@ -14,7 +14,10 @@ class LayoutCubit extends Cubit<LayoutState> {
   final String userId;
   final FirebaseFirestore firestore;
 
-  LayoutCubit({required this.userId, required this.firestore}) : super(LayoutInitial());
+  LayoutCubit({
+    required this.userId,
+    required this.firestore,
+  }) : super(LayoutInitial());
 
   List<Map<IconData, String>> bottomNavItems = [
     {Icons.home: AppStrings.home},

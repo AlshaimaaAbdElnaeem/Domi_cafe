@@ -1,19 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:domi_cafe/features/home/data/models/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../favorites/presentation/cubit/favorite_cubit.dart';
+import '../../../favorites/presentation/cubit/favorite_state.dart';
+import '../../../favorites/domain/entities/favorite_entity.dart';
+import 'package:domi_cafe/features/product_details/data/models/product_model.dart';
+
 
 class CardWidget extends StatelessWidget {
   const CardWidget({
-    super.key,
+    Key? key,
     required this.productModel,
-    this.onFavoriteTap,
     this.onCartTap,
     this.onDetailsTap,
-  });
+    this.onFavoriteTap,
+  }) : super(key: key);
 
   final ProductModel productModel;
-  final void Function()? onFavoriteTap, onCartTap, onDetailsTap;
+  final void Function()? onCartTap;
+  final void Function()? onDetailsTap;
+  final void Function()? onFavoriteTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +29,8 @@ class CardWidget extends StatelessWidget {
     return InkWell(
       onTap: onDetailsTap,
       child: SizedBox(
-        width: 180.w, 
-        height: 250.h, 
+        width: 180.w,
+        height: 250.h,
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.r),
@@ -32,18 +39,17 @@ class CardWidget extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
-              // -------------------- Image --------------------
               Positioned.fill(
                 child: CachedNetworkImage(
-       fit: BoxFit.cover,
-       imageUrl: productModel.image,
-       progressIndicatorBuilder: (context, url, downloadProgress) => 
-               CircularProgressIndicator(value: downloadProgress.progress),
-       errorWidget: (context, url, error) => Icon(Icons.error),
-    ),
+                  fit: BoxFit.cover,
+                  imageUrl: productModel.image.isNotEmpty
+                      ? productModel.image
+                      : 'https://via.placeholder.com/150',
+                  progressIndicatorBuilder: (context, url, progress) =>
+                      Center(child: CircularProgressIndicator(value: progress.progress)),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
-
-              // -------------------- Overlay --------------------
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -51,7 +57,7 @@ class CardWidget extends StatelessWidget {
                   height: 110.h,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: theme.cardColor.withOpacity(0.7), // Frosted-like effect
+                    color: theme.cardColor.withOpacity(0.7),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(15.r),
                       bottomRight: Radius.circular(15.r),
@@ -60,17 +66,32 @@ class CardWidget extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // ---------- Icons Row ----------
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(
-                            onPressed: onFavoriteTap,
-                            icon: Icon(
-                              Icons.favorite_border,
-                              size: 24.sp,
-                              color: theme.iconTheme.color,
-                            ),
+                          BlocBuilder<FavoriteCubit, FavoriteState>(
+                            builder: (context, state) {
+                              bool isFav = false;
+                              if (state is FavoriteLoaded) {
+                                isFav = state.favorites.any((fav) => fav.productId == productModel.id);
+                              }
+                              return IconButton(
+                                onPressed: () {
+                                  final favoriteEntity = FavoriteEntity(
+                                    id: productModel.id,
+                                    productId: productModel.id,
+                                    createdAt: DateTime.now(),
+                                  );
+                                  context.read<FavoriteCubit>().toggleFavorite(favoriteEntity);
+                                  if (onFavoriteTap != null) onFavoriteTap!();
+                                },
+                                icon: Icon(
+                                  isFav ? Icons.favorite : Icons.favorite_border,
+                                  size: 24.sp,
+                                  color: isFav ? Colors.red : theme.iconTheme.color,
+                                ),
+                              );
+                            },
                           ),
                           IconButton(
                             onPressed: onCartTap,
@@ -82,10 +103,8 @@ class CardWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      // ---------- Product Name ----------
                       Text(
-                        productModel.name,
+                        productModel.name.isNotEmpty ? productModel.name : 'Unnamed',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -94,13 +113,11 @@ class CardWidget extends StatelessWidget {
                           color: theme.textTheme.bodyMedium?.color,
                         ),
                       ),
-
-                      // ---------- Price & Rating ----------
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${productModel.price}\$',
+                            '${productModel.price.isNotEmpty ? productModel.price : '0'}\$',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
@@ -112,7 +129,7 @@ class CardWidget extends StatelessWidget {
                               Icon(Icons.star, color: Colors.amber, size: 14.sp),
                               SizedBox(width: 4.w),
                               Text(
-                                productModel.rating,
+                                productModel.rating.isNotEmpty ? productModel.rating : '0',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14.sp,

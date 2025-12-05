@@ -1,8 +1,11 @@
+import 'package:domi_cafe/features/home/presentation/screens/menu_screen.dart';
 import 'package:domi_cafe/features/layout/presentation/cubit/layout_cubit.dart';
 import 'package:domi_cafe/features/layout/presentation/screens/home_layout.dart';
 import 'package:domi_cafe/features/orders/presentation/cubit/home_cubit.dart';
 import 'package:domi_cafe/features/splash/presentation/screens/splash_screen.dart';
 import 'package:domi_cafe/features/auth/presentation/screens/auth_screen.dart';
+import 'package:domi_cafe/features/product_details/presentation/pages/product_details_page.dart';
+import 'package:domi_cafe/features/cart/presentation/screens/cart_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,16 +19,36 @@ class Routes {
   static const String cart = '/cart';
   static const String profile = '/profile';
   static const String myOrders = '/myOrders';
+  static const String productDetails = '/product_details';
+  static const String menu = '/menu';
 }
 
 class AppRoutes {
   static final AppRoutes instance = AppRoutes();
 
-  Route? onGenerateRoute(RouteSettings settings) {
+  Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case Routes.splash:
         return MaterialPageRoute(
           builder: (_) => const SplashScreen(),
+          settings: settings,
+        );
+
+      case Routes.auth:
+        return MaterialPageRoute(
+          builder: (_) => const AuthScreen(),
+          settings: settings,
+        );
+
+      case Routes.cart:
+        return MaterialPageRoute(
+          builder: (_) => const CartScreen(),
+          settings: settings,
+        );
+
+      case Routes.menu:
+        return MaterialPageRoute(
+          builder: (_) => const MenuScreen(),
           settings: settings,
         );
 
@@ -48,9 +71,10 @@ class AppRoutes {
           settings: settings,
         );
 
-      case Routes.auth:
+      case Routes.productDetails:
+        final productId = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => const AuthScreen(),
+          builder: (_) => ProductDetailsPage(productId: productId),
           settings: settings,
         );
 
