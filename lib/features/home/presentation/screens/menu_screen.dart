@@ -74,44 +74,43 @@ class MenuScreen extends StatelessWidget {
                   childAspectRatio: 0.75,
                 ),
                 itemCount: state.products.length,
-          itemBuilder: (context, index) {
-  final product = state.products[index];
-  return BlocProvider(
-    create: (_) => FavoriteCubit(FavoriteRepositoryImpl(FavoriteRemoteDs())),
-    child: CardWidget(
-      productModel: product,
-      onDetailsTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.productDetails,
-          arguments: product.id,
-        );
-      },
-                onFavoriteTap: () {},
-onCartTap: () {
-  print("PRODUCT DATA:");
-  print("ID: ${product.id}");
-  print("NAME: ${product.name}");
-  print("PRICE: ${product.price}");
-  print("IMAGE: ${product.image}");
-  print("------");
+                itemBuilder: (context, index) {
+                  final product = state.products[index];
+                  return BlocProvider(
+                    create: (_) =>
+                        FavoriteCubit(FavoriteRepositoryImpl(FavoriteRemoteDs())),
+                    child: CardWidget(
+                      productModel: product,
+                      onDetailsTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.productDetails,
+                          arguments: product.id,
+                        );
+                      },
+                      onFavoriteTap: () {},
+                      onCartTap: () {
+                        // Print product data for debug
+                        print("PRODUCT DATA:");
+                        print("ID: ${product.id}");
+                        print("NAME: ${product.name}");
+                        print("PRICE: ${product.price}");
+                        print("IMAGE: ${product.image}");
+                        print("------");
 
-  final cartItem = CartItem(
-    id: product.id,
-    name: product.name,
-    image: product.image,
-    price: double.tryParse(product.price.toString()) ?? 0.0,
-    quantity: 1,
-  );
+                        final cartItem = CartItem(
+                          id: product.id,
+                          name: product.name,
+                          image: product.image,
+                          price: double.tryParse(product.price.toString()) ?? 0.0,
+                          quantity: 1,
+                        );
 
-  context.read<CartCubit>().addToCart(cartItem);
-},
-
-
-    ),
-  );
-},
-
+                        context.read<CartCubit>().addToCart(cartItem);
+                      },
+                    ),
+                  );
+                },
               );
             } else if (state is ErrorProductState) {
               return Center(child: Text('Error: ${state.error}'));
