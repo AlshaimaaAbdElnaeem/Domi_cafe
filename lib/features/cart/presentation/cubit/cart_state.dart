@@ -1,14 +1,12 @@
-import 'package:domi_cafe/features/cart/domain/entities/cart_item_entity.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../domain/entities/cart_item_entity.dart';
 
-abstract class CartState {}
+part 'cart_state.freezed.dart';
 
-class CartInitial extends CartState {}
-class CartLoading extends CartState {}
-class CartLoaded extends CartState {
-  final List<CartItem> items;
-  CartLoaded(this.items);
-}
-class CartError extends CartState {
-  final String message;
-  CartError(this.message);
+@freezed
+class CartState with _$CartState {
+  const factory CartState.initial() = CartInitial;
+  const factory CartState.loading() = CartLoading;
+  const factory CartState.loaded(List<CartItem> items) = CartLoaded;
+  const factory CartState.error(String message) = CartError;
 }

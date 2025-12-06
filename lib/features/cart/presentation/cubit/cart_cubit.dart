@@ -9,24 +9,44 @@ class CartCubit extends Cubit<CartState> {
   final AddToCartUsecase addToCartUsecase;
   final GetCartUsecase getCartUsecase;
   final RemoveFromCartUsecase removeFromCartUsecase;
-  final String userId;
+  String userId;
 
   CartCubit({
     required this.addToCartUsecase,
     required this.getCartUsecase,
     required this.removeFromCartUsecase,
     required this.userId,
-  }) : super(CartInitial()) {
-    loadCart(); // <-- هنا الكارت يتحمل تلقائي عند إنشاء الـ Cubit
+  }) : super(const CartState.initial()) {
+    if (userId.isNotEmpty) {
+      loadCart(); // <-- هنا الكارت يتحمل تلقائي عند إنشاء الـ Cubit
+    }
+  }
+
+  // Method to update userId when user logs in
+  void updateUserId(String newUserId) {
+    userId = newUserId;
+    if (userId.isNotEmpty) {
+      loadCart();
+    }
   }
 
   Future<void> loadCart() async {
     try {
-      emit(CartLoading());
+      print('🔄 loadCart called for userId: $userId');
+      emit(const CartState.loading());
+      print('✓ Emitted CartLoading');
+
       final items = await getCartUsecase(userId);
-      emit(CartLoaded(items));
-    } catch (e) {
-      emit(CartError(e.toString()));
+      print('✓ Got ${items.length} items from usecase');
+      print('Items: ${items.map((e) => e.id).toList()}');
+
+      print('About to emit CartLoaded...');
+      emit(CartState.loaded(items));
+      print('✓ Successfully emitted CartLoaded with ${items.length} items');
+    } catch (e, stackTrace) {
+      print('❌ Error in loadCart: $e');
+      print('Stack trace: $stackTrace');
+      emit(CartState.error(e.toString()));
     }
   }
 
@@ -43,38 +63,48 @@ class CartCubit extends Cubit<CartState> {
   Future<void> increaseQty(String productId) async {
     final stateData = state;
     if (stateData is CartLoaded) {
-      final updatedItems = stateData.items.map((item) {
-        if (item.id == productId) {
-          return CartItem(
-            id: item.id,
-            name: item.name,
-            image: item.image,
-            price: item.price,
-            quantity: item.quantity + 1,
-          );
-        }
-        return item;
-      }).toList();
-      emit(CartLoaded(updatedItems));
+      // Find the item to update
+      final item = stateData.items.firstWhere((item) => item.id == productId);
+
+      // Create updated item with increased quantity
+      final updatedItem = CartItem(
+        id: item.id,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity + 1,
+      );
+
+      // Save to Firestore
+      await addToCartUsecase(userId, updatedItem);
+
+      // Reload cart from Firestore to ensure consistency
+      await loadCart();
     }
   }
 
   Future<void> decreaseQty(String productId) async {
     final stateData = state;
     if (stateData is CartLoaded) {
-      final updatedItems = stateData.items.map((item) {
-        if (item.id == productId && item.quantity > 1) {
-          return CartItem(
-            id: item.id,
-            name: item.name,
-            image: item.image,
-            price: item.price,
-            quantity: item.quantity - 1,
-          );
-        }
-        return item;
-      }).toList();
-      emit(CartLoaded(updatedItems));
+      // Find the item to update
+      final item = stateData.items.firstWhere((item) => item.id == productId);
+
+      if (item.quantity > 1) {
+        // Create updated item with decreased quantity
+        final updatedItem = CartItem(
+          id: item.id,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: item.quantity - 1,
+        );
+
+        // Save to Firestore
+        await addToCartUsecase(userId, updatedItem);
+
+        // Reload cart from Firestore to ensure consistency
+        await loadCart();
+      }
     }
   }
 }

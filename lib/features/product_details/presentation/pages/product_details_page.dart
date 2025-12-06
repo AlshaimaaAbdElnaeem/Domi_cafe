@@ -6,6 +6,8 @@ import '../cubit/product_details_cubit.dart';
 import '../../domain/usecases/get_product_usecase.dart';
 import '../../data/repo/product_repo_impl.dart';
 import '../../data/datasources/product_remote_ds.dart';
+import '../../../cart/presentation/cubit/cart_cubit.dart';
+import '../../../cart/domain/entities/cart_item_entity.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final String productId;
@@ -110,7 +112,25 @@ class ProductDetailsPage extends StatelessWidget {
                             ),
                             backgroundColor: Colors.brown,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            final cartItem = CartItem(
+                              id: p.id,
+                              name: p.name,
+                              image: p.image,
+                              price: double.tryParse(p.price) ?? 0.0,
+                              quantity: 1,
+                            );
+
+                            context.read<CartCubit>().addToCart(cartItem);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${p.name} added to cart'),
+                                duration: const Duration(seconds: 2),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          },
                           child: const Text(
                             "Add to Cart",
                             style: TextStyle(fontSize: 18, color: Colors.white),

@@ -1,9 +1,10 @@
 import 'package:domi_cafe/app.dart';
-import 'package:domi_cafe/features/cart/domain/repositories/cart_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/cart/domain/repositories/cart_repository.dart';
 import 'features/cart/presentation/cubit/cart_cubit.dart';
 import 'features/cart/domain/usecases/add_to_cart_usecase.dart';
 import 'features/cart/domain/usecases/get_cart_usecase.dart';
@@ -11,11 +12,18 @@ import 'features/cart/domain/usecases/remove_from_cart_usecase.dart';
 import 'features/cart/data/repositories/cart_repository_impl.dart';
 import 'features/home/presentation/cubit/product_cubit/product_cubit.dart';
 import 'features/home/data/data_source/remote_datasource.dart';
+import 'firebase_options.dart'; // مهم جداً
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  // إذا كنت عايز تهيئة ويب خاصة، شيل التعليق من هنا
+
+  // ⭐ تهيئة Firebase بالطريقة الصحيحة
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // الحصول على معرف المستخدم الحالي (إذا كان مسجل دخول)
+  final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   runApp(
     MultiBlocProvider(
@@ -28,7 +36,7 @@ void main() async {
             addToCartUsecase: AddToCartUsecase(CartRepositoryImpl()),
             getCartUsecase: GetCartUsecase(CartRepositoryImpl()),
             removeFromCartUsecase: RemoveFromCartUsecase(CartRepositoryImpl()),
-            userId: '',
+            userId: currentUserId,
           ),
         ),
         BlocProvider<ProductCubit>(
