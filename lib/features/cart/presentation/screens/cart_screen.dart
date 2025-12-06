@@ -18,29 +18,50 @@ class CartScreen extends StatelessWidget {
       ),
       body: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
-          if (state is CartLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is CartLoaded) {
-            if (state.items.isEmpty) {
-              return const Center(
-                  child: Text(
-                "Your cart is empty",
-                style: TextStyle(fontSize: 18, color: AppColors.lightText),
-              ));
-            }
+          return state.when(
+            initial: () => const Center(child: Text("Cart is empty")),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (message) {
+              print('Error ==> $message');
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Error: $message",
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => context.read<CartCubit>().loadCart(),
+                      child: const Text("Retry"),
+                    ),
+                  ],
+                ),
+              );
+            },
+            loaded: (items) {
+              if (items.isEmpty) {
+                return const Center(
+                    child: Text(
+                  "Your cart is empty",
+                  style: TextStyle(fontSize: 18, color: AppColors.lightText),
+                ));
+              }
 
-            final subtotal = state.items.fold<double>(
-                0, (sum, item) => sum + item.price * item.quantity);
-            final service = subtotal * 0.1;
-            final total = subtotal + service;
+              final subtotal = items.fold<double>(
+                  0, (sum, item) => sum + item.price * item.quantity);
+              final service = subtotal * 0.1;
+              final total = subtotal + service;
 
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: state.items.length,
-                    itemBuilder: (_, i) {
-                      final item = state.items[i];
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (_, i) {
+                        final item = items[i];
                       return Card(
                         margin: const EdgeInsets.all(10),
                         elevation: 4,
@@ -168,8 +189,8 @@ class CartScreen extends StatelessWidget {
                 )
               ],
             );
-          }
-          return const SizedBox();
+            },
+          );
         },
       ),
     );

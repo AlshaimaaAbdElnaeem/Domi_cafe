@@ -5,6 +5,7 @@ import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../widgets/login_widget.dart';
 import '../widgets/sign_up_widget.dart';
+import '../../../cart/presentation/cubit/cart_cubit.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -35,6 +36,9 @@ class _AuthScreenState extends State<AuthScreen> {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.info)));
           } else if (state is AuthSuccess) {
+            // Update CartCubit with the logged-in user's ID
+            context.read<CartCubit>().updateUserId(state.uid);
+
             Navigator.pushReplacementNamed(
               context,
               Routes.layout,

@@ -5,32 +5,47 @@ class CartRepositoryImpl implements CartRepository {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
-  Future<void> addToCart(String userId, product) async {
+  Future<void> addToCart(String userId, CartItem item) async {
     await firestore
         .collection("users")
         .doc(userId)
         .collection("cart")
-        .doc(product.id)
-        .set({
-      "id": product.id,
-      "name": product.name,
-      "image": product.image,
-      "price": product.price,
-      "quantity": 1,
-    }, SetOptions(merge: true));
+        .doc(item.id)
+        .set(item.toJson(), SetOptions(merge: true));
   }
 
   @override
   Future<List<CartItem>> getCart(String userId) async {
-    final snapshot = await firestore
-        .collection("users")
-        .doc(userId)
-        .collection("cart")
-        .get();
+    try {
+      final snapshot = await firestore
+          .collection("users")
+          .doc(userId)
+          .collection("cart")
+          .get();
 
-    return snapshot.docs
-        .map((doc) => CartItem.fromMap(doc.data()))
-        .toList();
+      print('Total documents: ${snapshot.docs.length}');
+
+      final List<CartItem> items = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        if (data != null) {
+          print('Cart document data: $data');
+          print('Data type: ${data.runtimeType}');
+
+          final cartItem = CartItem.fromJson(data);
+          print('✓ Successfully created CartItem: ${cartItem.id}');
+          items.add(cartItem);
+        }
+      }
+
+      print('Total items parsed: ${items.length}');
+      return items;
+    } catch (e, stackTrace) {
+      print('❌ Error in getCart: $e');
+      print('Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   @override

@@ -1,33 +1,18 @@
-class CartItem {
-  final String id;
-  final String name;
-  final String image;
-  final double price;
-  final int quantity;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  CartItem({
-    required this.id,
-    required this.name,
-    required this.image,
-    required this.price,
-    required this.quantity,
-  });
+part 'cart_item_entity.freezed.dart';
+part 'cart_item_entity.g.dart';
 
-  factory CartItem.fromMap(Map<String, dynamic> json) {
-    return CartItem(
-      id: json['id'],
-      name: json['name'],
-      image: json['image'],
-      price: (json['price'] as num).toDouble(),
-      quantity: json['quantity'],
-    );
-  }
+@freezed
+class CartItem with _$CartItem {
+  const factory CartItem({
+    required String id,
+    required String name,
+    required String image,
+    required double price,
+    required int quantity,
+  }) = _CartItem;
 
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "name": name,
-        "image": image,
-        "price": price,
-        "quantity": quantity,
-      };
+  factory CartItem.fromJson(Map<String, dynamic> json) =>
+      _$CartItemFromJson(json);
 }
